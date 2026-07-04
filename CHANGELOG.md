@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.3] - 2026-07-04
 
-> Security patch: quick-xml upgraded to fix an untrusted-XML denial-of-service, plus Linux aarch64 wheels on PyPI.
+> Security patch: clears every open RustSec advisory in the dependency tree — an untrusted-XML DoS (quick-xml), two pyo3 soundness/OOB fixes, and a memmap2 unsound-pointer fix — plus Linux aarch64 wheels on PyPI.
 
 ### Security
 
 - **quick-xml 0.40 → 0.41 (RUSTSEC-2026-0194 / RUSTSEC-2026-0195)** — quick-xml 0.40's `NamespaceResolver::push` performs an unbounded per-`xmlns` heap allocation inside `NsReader` *before* the parse event is returned, so a crafted Office document (DOCX/XLSX/PPTX) declaring many namespaces could exhaust memory and crash the reader — a denial-of-service on untrusted input. Upgraded to quick-xml 0.41, which bounds the allocation. Thanks @smissingham (#58); tracked in #59.
+- **pyo3 0.28 → 0.29 (RUSTSEC-2026-0176 / RUSTSEC-2026-0177)** — fixes an out-of-bounds read in `nth` / `nth_back` for `PyList` and `PyTuple` iterators, and a missing `Sync` bound on `PyCFunction::new_closure` closures, in the Python binding. Via Dependabot (#52).
+- **memmap2 0.9.10 → 0.9.11 (RUSTSEC-2026-0186)** — fixes an unchecked pointer offset (unsoundness). Via Dependabot (#55).
 
 ### Packaging
 
